@@ -5,7 +5,7 @@
 #include <sys/time.h>
 
 //Biblioteca Concorrente
-#include <openmp.h>
+#include <omp.h>
 
 #define N 2048 //Tamanho do tabuleiro NxN
 #define EXECUTIONS 2000 //Número de gerações 
