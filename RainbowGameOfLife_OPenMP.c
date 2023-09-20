@@ -39,19 +39,11 @@ float get_time_taken(struct timespec *start, struct timespec *end) {
     return time_taken;
 }
 
-//Imprime a Matriz 50x50 usando ■ para células vivas e □ para células mortas
-void PrintBoard_50x50(float **grid) {
-    int i, j;
-
-    for (i = 0; i < 50; i++) {
-        for (j = 0; j < 50; j++) {
-            if (grid[i][j] == 1)
-                printf("■ ");
-            else
-                printf("□ ");
-        }
-        printf("\n");
-    }
+//Calcula a média entre as 8 células vizinhas  da célula atual
+float CalculateAverage(float sum){
+    float avg;
+    avg = sum / 8;
+    return avg;
 }
 
 //Retorna no número de células vivas no tabuleiro
@@ -69,26 +61,50 @@ void getAliveCells(float **grid) {
     printf("Células vivas: %d\n", alive);
 }
 
+//Imprime a Matriz 50x50 usando ■ para células vivas e □ para células mortas
+void PrintBoard_50x50(float** grid, int generation){ 
+    int i, j;
+
+    printf("Geração número: %d\n", generation);
+    getAliveCells(grid);
+
+    for(i=0 ; i<50 ; i++){
+        for(j=0 ; j<50 ; j++){
+            if(grid[i][j] == 1)
+                printf("■ ");
+            else
+                printf("□ ");
+        }
+        printf("\n");
+    }
+    printf("----------------------------------------------------------------------------------------------------\n");
+}
+
+
 //Retorna no número de células vizinhas vivas da célula (i, j)
 int getNeighbors(float **grid, int i, int j) {
-    int count = 0;
+    float count = 0;
+    float avg;
     int newi, newj;
     int x, y;
 
-    for (x = -1; x <= 1; x++) {
-        for (y = -1; y <= 1; y++) {
+    for(x=-1 ; x<=1 ; x++){
+        for(y=-1 ; y<=1 ; y++){
 
-            if (x == 0 && y == 0) { // Ignora a célula atual
+            if (x == 0 && y == 0) { //Ignora a célula atual
                 continue;
             }
 
             newi = (i + x + N) % N;
             newj = (j + y + N) % N; // Tratamento mundo infinito
-            if (grid[newi][newj] == 1) {
-                count++;
+            if (grid[newi][newj] > 0) { // Se a célula vizinha estiver viva
+                count += grid[newi][newj]; //Soma o valor de todas as células vizinhas 
             }
+            
         }
     }
+
+    avg = CalculateAverage(count); //Chama a função para calcular a média dos valores das células vizinhas
 
     return count;
 }
@@ -129,7 +145,7 @@ void play_one_round(float **grid, float **newgrid, int id, int n, int lines) {
 
 //Inicia o Game Of Life 
 void play_GameOfLife(float **grid, float **newgrid) {
-    int i;
+    int i, board_count=0;
     int id;
     float time_taken;
 
@@ -150,10 +166,22 @@ void play_GameOfLife(float **grid, float **newgrid) {
             play_one_round(grid, newgrid, id, n, lines);
         }
 
+        /*if(board_count < (NUM_THREADS * 5)){
+            if(board_count % NUM_THREADS == 0)
+                PrintBoard_50x50(grid, board_count+1); //Imprimi o tabuleiro após todas a threads o executarem
+            board_count++;
+        }*/
+
         // Troque os grids após cada iteração
         float **temp = grid;
         grid = newgrid;
         newgrid = temp;
+
+        //Imprime os cinco primeiros tabuleiros
+        if(board_count < 5){
+            PrintBoard_50x50(grid, board_count+1);
+            board_count++;
+        }
     }
 
     clock_gettime(CLOCK_REALTIME, &end); //Obtém o tempo em que se termina (end)
@@ -201,12 +229,8 @@ int main(int argc, char *argv[]){
     //Inicia o jogo
     play_GameOfLife(grid, newgrid);
 
-    //Imprimi o número de células vivas
-    getAliveCells(grid);
-
-    //Imprimi o tabuleiro
-
-    PrintBoard_50x50(grid);
+    //Imprimi o tabuleiro final
+    PrintBoard_50x50(grid, EXECUTIONS);
 
     return 0;
 }

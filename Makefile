@@ -15,5 +15,14 @@ RainbowGameOfLife_Serial: RainbowGameOfLife_Serial.c
 
 all: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
 
+
+time: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
+	@echo "Timing RainbowGameOfLife_OpenMP..."
+	@time ./OpenMP
+	@echo "\nTiming RainbowGameOfLife_PThreads..."
+	@time ./PThreads
+	@echo "\nTiming RainbowGameOfLife_Serial..."
+	@time ./Serial
+
 clean:
 	rm -f Serial PThreads OpenMP
