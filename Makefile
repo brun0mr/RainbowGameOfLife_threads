@@ -23,6 +23,7 @@ RainbowGameOfLife_Serial: RainbowGameOfLife_Serial.c
 all: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
 
 # Rule for timing based on OS
+
 ifeq ($(DETECTED_OS),Windows)
 time: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
 	@echo "Timing RainbowGameOfLife_OpenMP on Windows..."
@@ -32,22 +33,24 @@ time: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Seri
 	@echo "\nTiming RainbowGameOfLife_Serial on Windows..."
 	@powershell Measure-Command {.\Serial.exe}
 else
+
+
+
 time: RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
 	@echo "Timing RainbowGameOfLife_OpenMP..."
-	@time ./RainbowGameOfLife_OpenMP
+	@echo $$(./OpenMP)
 	@echo "\nTiming RainbowGameOfLife_PThreads..."
-	@time ./RainbowGameOfLife_PThreads
+	@bash time ./PThreads
 	@echo "\nTiming RainbowGameOfLife_Serial..."
-	@time ./RainbowGameOfLife_Serial
+	@bash time ./Serial
 endif
-
 # Rule for clean based on OS
 ifeq ($(DETECTED_OS),Windows)
 clean:
-	@powershell Remove-Item -Force RainbowGameOfLife_OpenMP.exe, RainbowGameOfLife_PThreads.exe, RainbowGameOfLife_Serial.exe
+	@powershell Remove-Item -Force OpenMP.exe, PThreads.exe, Serial.exe
 else
 clean:
-	rm -f RainbowGameOfLife_OpenMP RainbowGameOfLife_PThreads RainbowGameOfLife_Serial
+	rm -f OpenMP PThreads Serial
 endif
 
 

@@ -1,3 +1,10 @@
+/*
+Atividade 1 PCD
+Grupo:  Bruno Maciel Rotondaro
+        Guilherme Aguiar Christ
+        Luiza Peres
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
